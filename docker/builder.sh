@@ -17,30 +17,24 @@ CFG
 echo "Generating file index..."
 echo "" > /tmp/related-files
 
-NATIVE_PKGS=(glibc glibc-common libgcc busybox "$@")
-NOARCH_PKGS=(setup)
+NATIVE_PKGS=(glibc glibc-common libgcc setup "$@")
 
-PKGS_TO_SHOW=("${NOARCH_PKGS[@]}")
+PKGS_TO_SHOW=()
 for I in "${NATIVE_PKGS[@]}"; do
 	PKGS_TO_SHOW+=("$I.x86_64" "$I.noarch")
 done
 
 dnf --forcearch x86_64 repoquery -l "${PKGS_TO_SHOW[@]}" \
 	| grep -v --fixed-strings -- '/.build-id' \
-	| grep -v --fixed-strings -- '/usr/share' \
-		>> /tmp/related-files
-
-CONTENT_PKGS=(ncurses-base tzdata)
-dnf --forcearch x86_64 repoquery -l "${CONTENT_PKGS[@]}" \
-	| grep -v --fixed-strings -- '/.build-id' \
 	| grep -v --fixed-strings -- '/usr/share/doc' \
+	| grep -v --fixed-strings -- '/usr/share/man' \
 		>> /tmp/related-files
 
 sed -i 's#^/##g' /tmp/related-files
 
 echo "Installing packages..."
 dnf install --installroot=/tmp/install --releasever=/ --setopt=cachedir=../../../../../../../../../../../../../../../var/cache/dnf \
-	-y "${NOARCH_PKGS[@]}" "${NATIVE_PKGS[@]}" "${CONTENT_PKGS[@]}"
+	-y "${NATIVE_PKGS[@]}"
 
 echo "Creating tarball..."
 tar --create \
@@ -71,9 +65,11 @@ for LIB in lib lib64 bin sbin; do
 	ln -s /usr/$LIB $LIB
 done
 
-echo "Preparing busybox..."
-mkdir usr/xbin
-chroot . /sbin/busybox --install -s /usr/xbin
+if [[ -e sbin/busybox ]]; then
+	echo "Preparing busybox..."
+	mkdir usr/xbin
+	chroot . /sbin/busybox --install -s /usr/xbin
+fi
 
 echo "Preparing shell (BASH)..."
 rm -f usr/xbin/sh
