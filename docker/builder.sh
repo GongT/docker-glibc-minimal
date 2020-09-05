@@ -65,14 +65,18 @@ for LIB in lib lib64 bin sbin; do
 	ln -s /usr/$LIB $LIB
 done
 
-if [[ -e sbin/busybox ]]; then
+if [[ -e usr/sbin/busybox ]]; then
 	echo "Preparing busybox..."
 	mkdir usr/xbin
-	chroot . /sbin/busybox --install -s /usr/xbin
+	chroot . /usr/sbin/busybox --install -s /usr/xbin
+	ln -s /usr/sbin/busybox /usr/bin/sh
 fi
 
-echo "Preparing shell (BASH)..."
-rm -f usr/xbin/sh
+if [[ -e usr/bin/bash ]]; then
+	echo "Preparing shell (BASH)..."
+	rm -f usr/xbin/sh /usr/bin/sh
+	ln -s /usr/bin/bash /usr/bin/sh
+fi
 
 echo "Install complete..."
 mkdir data

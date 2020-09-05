@@ -6,7 +6,7 @@
 |   version | contents    | size    |
 | --------: | :---------- | :------ |
 |  `latest` | `glibc`     | 26.4 MB |
-| `busybox` | + `busybox` | 30.7 MB |
-|    `bash` | + `bash`    | 33.6 MB |
+| `busybox` | + `busybox` | 30.9 MB |
+|    `bash` | + `bash`    | 33.8 MB |
 
 Note: latest (minimal) version only have glibc, no shell.
