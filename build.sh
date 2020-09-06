@@ -50,7 +50,7 @@ STORAGE_IMG=$BUILDAH_LAST_IMAGE
 do_hash() {
 	{
 		echo "$STORAGE_IMG ${BASE_PKGS[*]} ${PKGS[*]}"
-		cat "docker/builder.collect.sh"
+		cat "scripts/builder.collect.sh"
 	} | md5sum
 }
 do_build() {
@@ -66,7 +66,7 @@ do_build() {
 		"--volume=$RESULT_MNT:/mnt/dist" \
 		"--volume=$STORAGE_MNT:/mnt/source:ro" \
 		"$OPERATOR" \
-		bash -s - "${PKGS[@]}" "${BASE_PKGS[@]}" < "docker/builder.collect.sh"
+		bash -s - "${PKGS[@]}" "${BASE_PKGS[@]}" < "scripts/builder.collect.sh"
 
 	buildah umount "$STORAGE"
 	buildah rm "$STORAGE"

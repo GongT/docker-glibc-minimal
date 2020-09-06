@@ -49,7 +49,7 @@ for LIB in lib lib64 bin sbin; do
 		mv $LIB/* usr/$LIB
 		rmdir $LIB
 	fi
-	ln -s /usr/$LIB $LIB
+	ln -s usr/$LIB $LIB
 done
 
 if [[ -e usr/sbin/busybox ]]; then
@@ -58,14 +58,14 @@ if [[ -e usr/sbin/busybox ]]; then
 	chroot . /usr/sbin/busybox --install -s /usr/xbin
 
 	if ! [[ -e usr/bin/sh ]]; then
-		ln -s /usr/sbin/busybox usr/bin/sh
+		ln -s ../sbin/busybox usr/bin/sh
 	fi
 fi
 
 if [[ -e usr/bin/bash ]]; then
 	echo "Preparing shell (BASH)..."
 	rm -f usr/xbin/sh usr/bin/sh
-	ln -s /usr/bin/bash usr/bin/sh
+	ln -s ./bash usr/bin/sh
 fi
 
 echo "Install complete..."

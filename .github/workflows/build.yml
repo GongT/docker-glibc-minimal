@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'docker/**'
+      - 'scripts/builder.collect.sh'
       - '.github/workflows/build.yml'
       - 'common'
       - 'build.sh'
