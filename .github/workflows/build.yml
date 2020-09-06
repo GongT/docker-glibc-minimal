@@ -9,7 +9,6 @@ on:
       - master
   schedule:
     - cron: '30 15 */3 * *'
-env:
 jobs:
   cancel:
     name: Cancel Previous Runs

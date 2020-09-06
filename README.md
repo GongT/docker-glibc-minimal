@@ -1,7 +1,7 @@
 # Minimal glibc extracted from Fedora
 
 [![docker](https://img.shields.io/docker/pulls/gongt/glibc.svg)](https://hub.docker.com/r/gongt/glibc)
-[![docker](https://img.shields.io/docker/build/gongt/glibc.svg)](https://hub.docker.com/r/gongt/glibc)
+[![actions](https://github.com/GongT/docker-glibc-minimal/workflows/Create%20Images/badge.svg)](https://github.com/GongT/docker-glibc-minimal/actions)
 
 |   version | contents    | size    |
 | --------: | :---------- | :------ |
