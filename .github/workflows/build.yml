@@ -39,7 +39,7 @@ jobs:
           http_proxy: http://proxy-server.:3271
 
       - name: 'Fetch exists image from docker'
-        run: podman pull "docker://docker.io/gongt/cloud:${{ matrix.tag }}"
+        run: podman pull "docker://docker.io/gongt/glibc:${{ matrix.tag }}"
         continue-on-error: true
 
       - name: 'Fetch base image from docker'
@@ -53,4 +53,4 @@ jobs:
         shell: bash
         env:
           PASSWD: ${{ secrets.DockerPassword }}
-        run: ./common/tools/retry.sh podman push "${{ env.LAST_COMMITED_IMAGE }}" --creds "gongt:$PASSWD" "docker://docker.io/gongt/cloud"
+        run: ./common/tools/retry.sh podman push "${{ env.LAST_COMMITED_IMAGE }}" --creds "gongt:$PASSWD" "docker://docker.io/gongt/glibc:${{ matrix.tag }}"
