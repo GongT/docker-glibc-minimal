@@ -11,6 +11,7 @@ MAXIMUM_PACKAGES=(tzdata busybox ncurses-base ncurses-libs bash)
 declare -x BASE_PKGS=(glibc glibc-common libgcc setup)
 
 PPATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+PSHELL=""
 case "$TAG" in
 bash)
 	PKGS=(tzdata busybox ncurses-base ncurses-libs bash)

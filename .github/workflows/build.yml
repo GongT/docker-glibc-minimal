@@ -5,6 +5,7 @@ on:
     paths:
       - 'docker/**'
       - 'common'
+      - 'build.sh'
     branches:
       - master
   schedule:
