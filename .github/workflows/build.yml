@@ -1,0 +1,56 @@
+name: 'Create Images'
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docker/**'
+      - 'common'
+    branches:
+      - master
+  schedule:
+    - cron: '30 15 */3 * *'
+env:
+jobs:
+  cancel:
+    name: Cancel Previous Runs
+    runs-on: ubuntu-latest
+    steps:
+      - name: cancel running workflows
+        uses: GongT/cancel-previous-workflows@4f68a25b64f2aeec495c67487f3a7add12eaf81a
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+  build-minimal:
+    name: 'minimal (latest) image'
+    runs-on: [self-hosted, linux]
+
+    strategy:
+      matrix:
+        tag:
+          - bash
+          - busybox
+          - latest
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+        env:
+          http_proxy: http://proxy-server.:3271
+
+      - name: 'Fetch exists image from docker'
+        run: podman pull "docker://docker.io/gongt/cloud:${{ matrix.tag }}"
+        continue-on-error: true
+
+      - name: 'Fetch base image from docker'
+        run: podman pull "fedora:latest"
+        continue-on-error: true
+
+      - name: 'Build Image'
+        run: bash -e build.sh ${{ matrix.tag }}
+
+      - name: 'Publish to docker hub'
+        shell: bash
+        env:
+          PASSWD: ${{ secrets.DockerPassword }}
+        run: ./common/retry.sh podman push "${{ env.LAST_COMMITED_IMAGE }}" --creds "gongt:$PASSWD" "docker://docker.io/gongt/cloud"
