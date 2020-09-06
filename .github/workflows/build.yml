@@ -19,7 +19,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
   build-minimal:
-    name: 'minimal (latest) image'
+    name: 'Build Publish'
     runs-on: [self-hosted, linux]
 
     strategy:
@@ -52,4 +52,4 @@ jobs:
         shell: bash
         env:
           PASSWD: ${{ secrets.DockerPassword }}
-        run: ./common/retry.sh podman push "${{ env.LAST_COMMITED_IMAGE }}" --creds "gongt:$PASSWD" "docker://docker.io/gongt/cloud"
+        run: ./common/tools/retry.sh podman push "${{ env.LAST_COMMITED_IMAGE }}" --creds "gongt:$PASSWD" "docker://docker.io/gongt/cloud"
