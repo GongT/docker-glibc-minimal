@@ -19,6 +19,7 @@ jobs:
       - name: cancel running workflows
         uses: GongT/cancel-previous-workflows@4f68a25b64f2aeec495c67487f3a7add12eaf81a
         env:
+          DELETE: "yes"
           GITHUB_TOKEN: ${{ github.token }}
   build-minimal:
     name: 'Build Publish'
