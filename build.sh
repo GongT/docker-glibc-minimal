@@ -38,7 +38,7 @@ esac
 	done
 )
 
-if [[ " ${PKGS[*]} " = *" busybox "* ]]; then
+if [[ " ${PKGS[*]} " = *"busybox"* ]]; then
 	PPATH+=":/usr/xbin"
 fi
 
@@ -49,8 +49,9 @@ make_base_image_by_dnf "my-glibc-build" "${BASE_PKGS[@]}" "${MAXIMUM_PACKAGES[@]
 STORAGE_IMG=$BUILDAH_LAST_IMAGE
 do_hash() {
 	{
-		echo "$STORAGE_IMG ${BASE_PKGS[*]} ${PKGS[*]}"
+		echo "$STORAGE_IMG"
 		cat "scripts/builder.collect.sh"
+		cat "build.sh"
 	} | md5sum
 }
 do_build() {

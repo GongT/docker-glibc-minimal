@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: cancel running workflows
-        uses: GongT/cancel-previous-workflows@4f68a25b64f2aeec495c67487f3a7add12eaf81a
+        uses: GongT/cancel-previous-workflows@6dd7af8389c9434cc893fd33b58609e73db49fbe
         env:
           DELETE: "yes"
           GITHUB_TOKEN: ${{ github.token }}
