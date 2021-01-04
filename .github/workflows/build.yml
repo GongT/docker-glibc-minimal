@@ -42,11 +42,11 @@ jobs:
 
       - name: 'Fetch exists image from docker'
         run: podman pull "docker://docker.io/gongt/glibc:${{ matrix.tag }}"
-        continue-on-error: true
+        # continue-on-error: true
 
       - name: 'Fetch base image from docker'
         run: podman pull "fedora:latest"
-        continue-on-error: true
+        # continue-on-error: true
 
       - name: 'Build Image'
         run: bash -e build.sh ${{ matrix.tag }}
