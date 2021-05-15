@@ -32,18 +32,22 @@ esac
 (
 	MAXIMUM_PACKAGES_STR=" ${MAXIMUM_PACKAGES[*]} "
 	for I in "${PKGS[@]}"; do
-		if [[ "$MAXIMUM_PACKAGES_STR" != *" $I "* ]]; then
+		if [[ $MAXIMUM_PACKAGES_STR != *" $I "* ]]; then
 			die "Package $I not inside MAXIMUM_PACKAGES"
 		fi
 	done
 )
 
-if [[ " ${PKGS[*]} " = *"busybox"* ]]; then
+if [[ " ${PKGS[*]} " == *"busybox"* ]]; then
 	PPATH+=":/usr/xbin"
 fi
 
 ## prepare them
-make_base_image_by_dnf "my-glibc-build" "${BASE_PKGS[@]}" "${MAXIMUM_PACKAGES[@]}"
+TFILE=$(create_temp_file dependencies-list)
+for i in "${BASE_PKGS[@]}" "${MAXIMUM_PACKAGES[@]}"; do
+	echo "$i" >>"$TFILE"
+done
+make_base_image_by_dnf "my-glibc-build" "$TFILE"
 
 ## create result
 STORAGE_IMG=$BUILDAH_LAST_IMAGE
@@ -61,13 +65,13 @@ do_build() {
 	STORAGE=$(create_if_not "$id-temp-store" "$STORAGE_IMG")
 	STORAGE_MNT=$(buildah mount "$STORAGE")
 
-	OPERATOR=$(create_if_not "fedora" "fedora")
+	OPERATOR=$(create_if_not "fedora_copy_glibc" "fedora:latest")
 
 	buildah run $(use_fedora_dnf_cache) "$(mount_tmpfs /tmp)" \
 		"--volume=$RESULT_MNT:/mnt/dist" \
 		"--volume=$STORAGE_MNT:/mnt/source:ro" \
 		"$OPERATOR" \
-		bash -s - "${PKGS[@]}" "${BASE_PKGS[@]}" < "scripts/builder.collect.sh"
+		bash -s - "${PKGS[@]}" "${BASE_PKGS[@]}" <"scripts/builder.collect.sh"
 
 	buildah umount "$STORAGE"
 	buildah rm "$STORAGE"
