@@ -3,7 +3,7 @@
 set -Eeuo pipefail
 export TMPDIR="$RUNNER_TEMP"
 
-cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/.."
+cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 # shellcheck source=../common/functions-build-host.sh
 source "./common/functions-build-host.sh"
 
