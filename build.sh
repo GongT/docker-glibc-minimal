@@ -43,6 +43,7 @@ if [[ " ${PKGS[*]} " == *"busybox"* ]]; then
 fi
 
 ## prepare them
+STEP="安装依赖"
 TFILE=$(create_temp_file dependencies-list)
 for i in "${BASE_PKGS[@]}" "${MAXIMUM_PACKAGES[@]}"; do
 	echo "$i" >>"$TFILE"
@@ -50,6 +51,8 @@ done
 make_base_image_by_dnf "my-glibc-build" "$TFILE"
 
 ## create result
+echo 111111111111111111111111111111111
+STEP="收集文件"
 STORAGE_IMG=$BUILDAH_LAST_IMAGE
 do_hash() {
 	{
@@ -83,6 +86,7 @@ buildah_cache2 "$id" do_hash do_build
 
 info_log ""
 
+STEP="更新配置"
 RESULT=$(new_container "glibc-$TAG-final" "$BUILDAH_LAST_IMAGE")
 buildah config \
 	"--cmd=$PSHELL" "--env=PATH=$PPATH" \
@@ -90,5 +94,6 @@ buildah config \
 	"--label=name=gongt/glibc:$TAG" "$RESULT"
 info_log ""
 
+STEP="提交镜像"
 buildah commit --squash "$RESULT" "docker.io/gongt/glibc:$TAG"
 info "Done!"

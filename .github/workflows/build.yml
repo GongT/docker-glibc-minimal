@@ -58,4 +58,4 @@ jobs:
         shell: bash
         env:
           PASSWD: ${{ secrets.DockerPassword }}
-        run: ./common/tools/retry.sh sudo podman push "${{ env.LAST_COMMITED_IMAGE }}" --creds "gongt:$PASSWD" "docker://docker.io/gongt/glibc:${{ matrix.tag }}"
+        run: ./common/tools/retry.sh sudo --preserve-env podman push "${{ env.LAST_COMMITED_IMAGE }}" --creds "gongt:$PASSWD" "docker://docker.io/gongt/glibc:${{ matrix.tag }}"
