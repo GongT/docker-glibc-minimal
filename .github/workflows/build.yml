@@ -42,18 +42,19 @@ jobs:
         run: sudo apt install jq gnupg podman buildah mount
 
       - name: 'Fetch exists image from docker'
-        run: podman pull "docker://docker.io/gongt/glibc:${{ matrix.tag }}"
+        run: sudo podman pull "docker://docker.io/gongt/glibc:${{ matrix.tag }}"
         # continue-on-error: true
 
       - name: 'Fetch base image from docker'
-        run: podman pull "fedora:latest"
+        run: sudo podman pull "fedora:latest"
         # continue-on-error: true
 
       - name: 'Build Image'
-        run: buildah unshare bash -e build.sh ${{ matrix.tag }}
+        shell: bash
+        run: ./ci-build.sh
 
       - name: 'Publish to docker hub'
         shell: bash
         env:
           PASSWD: ${{ secrets.DockerPassword }}
-        run: ./common/tools/retry.sh podman push "${{ env.LAST_COMMITED_IMAGE }}" --creds "gongt:$PASSWD" "docker://docker.io/gongt/glibc:${{ matrix.tag }}"
+        run: ./common/tools/retry.sh sudo podman push "${{ env.LAST_COMMITED_IMAGE }}" --creds "gongt:$PASSWD" "docker://docker.io/gongt/glibc:${{ matrix.tag }}"
