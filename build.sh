@@ -81,7 +81,7 @@ do_build() {
 }
 
 id="glibc-built-$TAG"
-buildah_cache_start "$id" scratch
+buildah_cache_start scratch
 buildah_cache2 "$id" do_hash do_build
 
 info_log ""
