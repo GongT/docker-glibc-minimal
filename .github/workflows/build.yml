@@ -21,7 +21,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
   build-minimal:
     name: 'Build Publish'
-    runs-on: [self-hosted, linux]
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -38,6 +38,9 @@ jobs:
         env:
           http_proxy: http://proxy-server.:3271
 
+      - name: 'Install dependencies'
+        run: sudo apt install jq gnupg podman buildah mount
+
       - name: 'Fetch exists image from docker'
         run: podman pull "docker://docker.io/gongt/glibc:${{ matrix.tag }}"
         # continue-on-error: true
@@ -47,7 +50,7 @@ jobs:
         # continue-on-error: true
 
       - name: 'Build Image'
-        run: bash -e build.sh ${{ matrix.tag }}
+        run: buildah unshare bash -e build.sh ${{ matrix.tag }}
 
       - name: 'Publish to docker hub'
         shell: bash
