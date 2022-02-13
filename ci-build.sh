@@ -2,9 +2,9 @@
 
 set -Eeuo pipefail
 
-export PROJECT_NAME=$1
+export TAG=$1
 export TMPDIR="$RUNNER_TEMP"
-export REWRITE_IMAGE_NAME="build.local/dist/${PROJECT_NAME}"
+export REWRITE_IMAGE_NAME="build.local/dist/${TAG}"
 
 echo "SYSTEM_COMMON_CACHE=${SYSTEM_COMMON_CACHE:=$HOME/cache}" >>"$GITHUB_ENV"
 
@@ -16,4 +16,4 @@ if [[ ${CI+found} != found ]]; then
 	die "This script is only for CI"
 fi
 
-sudo bash "./build.sh" || die "Build failed"
+sudo bash "./build.sh" "$TAG" || die "Build failed"
