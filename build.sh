@@ -51,7 +51,6 @@ done
 make_base_image_by_dnf "my-glibc-build" "$TFILE"
 
 ## create result
-echo 111111111111111111111111111111111
 STEP="收集文件"
 STORAGE_IMG=$BUILDAH_LAST_IMAGE
 do_hash() {
