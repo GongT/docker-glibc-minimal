@@ -7,18 +7,18 @@ set -Eeuo pipefail
 cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 source ./common/functions-build.sh
 
-MAXIMUM_PACKAGES=(tzdata busybox ncurses-base ncurses-libs bash)
+MAXIMUM_PACKAGES=(tzdata busybox-shared ncurses-base ncurses-libs bash)
 declare -x BASE_PKGS=(glibc glibc-common libgcc setup)
 
 PPATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 PSHELL=""
 case "$TAG" in
 bash)
-	PKGS=(tzdata busybox ncurses-base ncurses-libs bash)
+	PKGS=(tzdata busybox-shared ncurses-base ncurses-libs bash)
 	PSHELL="/usr/bin/bash"
 	;;
 busybox)
-	PKGS=(tzdata busybox)
+	PKGS=(tzdata busybox-shared)
 	PSHELL="/usr/bin/sh"
 	;;
 latest)
@@ -48,7 +48,9 @@ TFILE=$(create_temp_file dependencies-list)
 for i in "${BASE_PKGS[@]}" "${MAXIMUM_PACKAGES[@]}"; do
 	echo "$i" >>"$TFILE"
 done
+# POST_SCRIPT=$(<scripts/create-package-index.sh)
 make_base_image_by_dnf "my-glibc-build" "$TFILE"
+# unset POST_SCRIPT
 
 ## create result
 STEP="收集文件"
@@ -57,7 +59,7 @@ do_hash() {
 	{
 		echo "$STORAGE_IMG"
 		cat "scripts/builder.collect.sh"
-		cat "build.sh"
+		declare -f "do_build"
 	} | md5sum
 }
 do_build() {
@@ -69,6 +71,7 @@ do_build() {
 
 	OPERATOR=$(create_if_not "fedora_copy_glibc" "fedora:latest")
 
+	echo "${PKGS[@]}" "${BASE_PKGS[@]}"
 	buildah run $(use_fedora_dnf_cache) "$(mount_tmpfs /tmp)" \
 		"--volume=$RESULT_MNT:/mnt/dist" \
 		"--volume=$STORAGE_MNT:/mnt/source:ro" \
@@ -86,13 +89,29 @@ buildah_cache2 "$id" do_hash do_build
 info_log ""
 
 STEP="更新配置"
-RESULT=$(new_container "glibc-$TAG-final" "$BUILDAH_LAST_IMAGE")
-buildah config \
+buildah_config "glibc-$TAG-final" \
 	"--cmd=$PSHELL" "--env=PATH=$PPATH" \
 	"--author=GongT <admin@gongt.me>" "--created-by=magic" \
-	"--label=name=gongt/glibc:$TAG" "$RESULT"
+	"--label=name=gongt/glibc:$TAG"
 info_log ""
 
-STEP="提交镜像"
-buildah commit --squash "$RESULT" "docker.io/gongt/glibc:$TAG"
+BASE_ANNO_ID="me.gongt.glibc.buildid"
+DIST="docker.io/gongt/glibc:$TAG"
+if image_exists "$DIST"; then
+	LAST_FROM_ID=$(builah_get_annotation "$DIST" "$BASE_ANNO_ID")
+	if [[ $LAST_FROM_ID == "$BUILDAH_LAST_IMAGE" ]]; then
+		info_success "镜像没有任何修改"
+		exit
+	else
+		info_note "应用新镜像:\n  exists: ${LAST_FROM_ID}\n  create: ${BUILDAH_LAST_IMAGE}"
+	fi
+else
+	info_note "不存在缓存镜像"
+fi
+
+RESULT=$(new_container "$BUILDAH_LAST_IMAGE")
+xbuildah config --add-history \
+	"--annotation=$BASE_ANNO_ID=$BUILDAH_LAST_IMAGE" \
+	"$RESULT" >/dev/null
+buildah commit --squash "$RESULT" "$DIST"
 info "Done!"
