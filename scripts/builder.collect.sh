@@ -56,8 +56,8 @@ done
 tar -xf /tmp/result.tar.gz
 
 if [[ -e "usr/sbin/busybox" ]]; then
-	BUSYBOX="usr/sbin/busybox"
-elif [[ -e "/usr/sbin/busybox.shared" ]]; then
+	BUSYBOX="/usr/sbin/busybox"
+elif [[ -e "usr/sbin/busybox.shared" ]]; then
 	BUSYBOX="/usr/sbin/busybox.shared"
 else
 	BUSYBOX=

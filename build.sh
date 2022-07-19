@@ -101,6 +101,7 @@ if image_exists "$DIST"; then
 	LAST_FROM_ID=$(builah_get_annotation "$DIST" "$BASE_ANNO_ID")
 	if [[ $LAST_FROM_ID == "$BUILDAH_LAST_IMAGE" ]]; then
 		info_success "镜像没有任何修改"
+		control_ci "set-env" "LAST_COMMITED_IMAGE" "$BUILDAH_LAST_IMAGE"
 		exit
 	else
 		info_note "应用新镜像:\n  exists: ${LAST_FROM_ID}\n  create: ${BUILDAH_LAST_IMAGE}"
@@ -109,7 +110,7 @@ else
 	info_note "不存在缓存镜像"
 fi
 
-RESULT=$(new_container "$BUILDAH_LAST_IMAGE")
+RESULT=$(new_container "gongt-glibc-$TAG" "$BUILDAH_LAST_IMAGE")
 xbuildah config --add-history \
 	"--annotation=$BASE_ANNO_ID=$BUILDAH_LAST_IMAGE" \
 	"$RESULT" >/dev/null
