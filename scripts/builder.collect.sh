@@ -10,7 +10,7 @@ if [[ ${SOURCE_FOLDER+found} != found ]]; then
 fi
 declare -r FILELIST="/tmp/FILELIST.txt"
 
-echo "Query $# packages: $*"
+echo "[collector] Query $# packages: $*"
 
 for I; do
 	rpm --root "$SOURCE_FOLDER" -ql "$I"
@@ -27,7 +27,7 @@ done \
 	| sort | uniq \
 	>"$FILELIST"
 
-TMPTARF=$(create_temp_file)
+TMPTARF=$(mktemp)
 
 echo "Creating tarball..."
 cd "$SOURCE_FOLDER"
