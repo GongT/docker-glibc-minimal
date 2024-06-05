@@ -27,6 +27,8 @@ done \
 	| sort | uniq \
 	>"$FILELIST"
 
+TMPTARF=$(create_temp_file)
+
 echo "Creating tarball..."
 cd "$SOURCE_FOLDER"
 # xargs ls -d >/dev/null <"$FILELIST"
@@ -38,10 +40,10 @@ tar --create \
 	--no-seek \
 	"--directory=$SOURCE_FOLDER" \
 	"--files-from=$FILELIST" \
-	>/tmp/result.tar.gz
+	>"$TMPTARF"
 
-ls -lh /tmp/result.tar.gz
-FILES_IN_ZIP=$(tar tf /tmp/result.tar.gz | wc -l)
+ls -lh "$TMPTARF"
+FILES_IN_ZIP=$(tar tf "$TMPTARF" | wc -l)
 echo " -- $(wc -l "$FILELIST" | awk '{print $1}') files wanted"
 echo " -- $FILES_IN_ZIP files included"
 
@@ -50,14 +52,14 @@ if [[ $FILES_IN_ZIP -lt 100 ]]; then
 	exit 1
 fi
 
-echo "Creating dist..."
+echo "Creating dist: $DIST_FOLDER"
 cd "$DIST_FOLDER"
 
 for LIB in lib lib64 bin sbin; do
 	mkdir -p ./usr/$LIB
 	ln -s ./usr/$LIB $LIB
 done
-tar -xf /tmp/result.tar.gz
+tar -xf "$TMPTARF"
 
 if [[ -e "usr/sbin/busybox" ]]; then
 	BUSYBOX="/usr/sbin/busybox"
