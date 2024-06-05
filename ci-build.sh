@@ -26,4 +26,4 @@ echo '{}' >"$REGISTRY_AUTH_FILE"
 export DIST_FOLDER="$(create_temp_dir)"
 export SOURCE_FOLDER="$(create_temp_dir)"
 
-sudo --preserve-env bash "./build.sh" "$TAG" || die "Build failed"
+bash "./build.sh" "$TAG" || die "Build failed"
