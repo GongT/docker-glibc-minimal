@@ -75,6 +75,8 @@ do_build() {
 	buildah run $(use_fedora_dnf_cache) "$(mount_tmpfs /tmp)" \
 		"--volume=$RESULT_MNT:/mnt/dist" \
 		"--volume=$STORAGE_MNT:/mnt/source:ro" \
+		"--env=DIST_FOLDER=$DIST_FOLDER" \
+		"--env=SOURCE_FOLDER=$SOURCE_FOLDER" \
 		"$OPERATOR" \
 		bash -s - "${PKGS[@]}" "${BASE_PKGS[@]}" <"scripts/builder.collect.sh"
 
