@@ -43,6 +43,8 @@ tar --create \
 	>"$TMPTARF"
 
 ls -lh "$TMPTARF"
+id
+
 FILES_IN_ZIP=$(tar tf "$TMPTARF" | wc -l)
 echo " -- $(wc -l "$FILELIST" | awk '{print $1}') files wanted"
 echo " -- $FILES_IN_ZIP files included"
