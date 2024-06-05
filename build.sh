@@ -7,18 +7,18 @@ set -Eeuo pipefail
 cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 source ./common/functions-build.sh
 
-MAXIMUM_PACKAGES=(tzdata busybox-shared ncurses-base ncurses-libs bash)
+MAXIMUM_PACKAGES=(tzdata busybox ncurses-base ncurses-libs bash)
 declare -x BASE_PKGS=(glibc glibc-common libgcc setup)
 
 PPATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 PSHELL=""
 case "$TAG" in
 bash)
-	PKGS=(tzdata busybox-shared ncurses-base ncurses-libs bash)
+	PKGS=(tzdata busybox ncurses-base ncurses-libs bash)
 	PSHELL="/usr/bin/bash"
 	;;
 busybox)
-	PKGS=(tzdata busybox-shared)
+	PKGS=(tzdata busybox)
 	PSHELL="/usr/bin/sh"
 	;;
 latest)
