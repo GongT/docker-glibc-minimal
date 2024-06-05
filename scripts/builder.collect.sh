@@ -2,8 +2,12 @@
 
 set -Eeuo pipefail
 
-declare -r DIST_FOLDER="/mnt/dist"
-declare -r SOURCE_FOLDER="/mnt/source"
+if [[ ${DIST_FOLDER+found} != found ]]; then
+	declare -r DIST_FOLDER="/mnt/dist"
+fi
+if [[ ${SOURCE_FOLDER+found} != found ]]; then
+	declare -r SOURCE_FOLDER="/mnt/source"
+fi
 declare -r FILELIST="/tmp/FILELIST.txt"
 
 echo "Query $# packages: $*"

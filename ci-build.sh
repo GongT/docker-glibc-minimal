@@ -23,4 +23,7 @@ fi
 mkdir -p "$HOME/secrets"
 echo '{}' >"$REGISTRY_AUTH_FILE"
 
+export DIST_FOLDER="$(mktemp -d)"
+export SOURCE_FOLDER="$(mktemp -d)"
+
 sudo --preserve-env bash "./build.sh" "$TAG" || die "Build failed"
